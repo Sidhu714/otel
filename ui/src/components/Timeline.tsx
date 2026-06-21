@@ -1,39 +1,6 @@
 import { useState } from 'react'
+import type { Span, TimelineProps } from '../utils/types'
 
-type SpanStatus = {
-  code?: number
-}
-
-
-type SpanAnalysis = {
-  isSlow?: boolean
-  p95?: number
-  avgMs?: number
-  ratio?: number
-}
-
-type Span = {
-  spanId: string
-  parentSpanId?: string | null
-  name: string
-  startMs: number
-  durationMs: number
-  status?: SpanStatus
-  attributes?: Record<string, unknown>
-  analysis?: SpanAnalysis
-}
-
-type Trace = {
-  traceId: string
-  startMs: number
-  durationMs: number
-  spans?: Span[]
-  hasError?: boolean
-}
-
-type TimelineProps = {
-  trace: Trace
-}
 
 const COLORS = {
   db:    '#0F6E56',

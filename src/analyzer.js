@@ -97,8 +97,8 @@ export function resetAnalyzer(samples){
 
 
 function calcP95(samples){
-    const sorted = [...samples].sort((a,b) => b - a);
-    idx = Math.floor(sorted.length * 0.95);
+    const sorted = [...samples].sort((a,b) => a - b);
+    const idx = Math.floor(sorted.length * 0.95);
 
     return sorted[Math.min(idx,sorted.length - 1)];
 

@@ -4,9 +4,9 @@ services:
   postgres:
     image : postgres:16-alpine
     environment:
-      - POSTGRES_USER:otellocal
-      - POSTGRES_PASSWORD: otellocal
-      - POSTGRES_DB:       otellocal
+      - POSTGRES_USER=otellocal
+      - POSTGRES_PASSWORD=otellocal
+      - POSTGRES_DB=otellocal
     ports:
       - "5432:5432"
     volumes:

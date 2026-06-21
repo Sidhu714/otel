@@ -1,37 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import * as d3 from 'd3'
+import type { GraphData, SimNode, SimEdge } from '../utils/types'
 
-/* ================= TYPES ================= */
-
-type GraphNode = {
-  id: string
-  service: string
-  spanCount: number
-  errorCount: number
-}
-
-type GraphEdge = {
-  source: string | GraphNode
-  target: string | GraphNode
-  count: number
-  errorRate: number
-  avgMs: number
-}
-
-type GraphData = {
-  nodes: GraphNode[]
-  edges: GraphEdge[]
-}
-
-type SimNode = GraphNode & d3.SimulationNodeDatum
-
-type SimEdge = d3.SimulationLinkDatum<SimNode> & {
-  count: number
-  errorRate: number
-  avgMs: number
-}
-
-/* ================= COMPONENT ================= */
 
 export default function ServiceGraph() {
   const svgRef = useRef<SVGSVGElement | null>(null)
@@ -43,7 +13,7 @@ export default function ServiceGraph() {
   /* ========== FETCH DATA ========== */
    const fetchGraph = () => {            // ← extract to named function
     setLoading(true)
-    fetch('http://localhost:4320/api/graph')
+    fetch('/api/graph')
       .then(r => r.json())
       .then(data => { setGraph(data); setLoading(false) })
       .catch(err => { setError(err.message); setLoading(false) })

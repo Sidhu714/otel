@@ -5,6 +5,12 @@ import { createHttpReceiver } from './http-receiver.js';
 import { attachWsServer } from './ws-server.js';
 import { createApiRouter } from './api.js';
 import { store } from './store.js';
+import path from "path";
+import { fileURLToPath } from "url";
+
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const UI_DIST = path.join(__dirname, "..",'ui','dist');
 
 const OTLP_HTTP_PORT = process.env.OTLP_HTTP_PORT ?? 4318;
 const API_PORT       = process.env.API_PORT       ?? 4320;
@@ -17,11 +23,19 @@ otlpServer.listen(OTLP_HTTP_PORT, () => {
 });
 
 const apiApp = express();
+
 apiApp.use(cors());
 apiApp.use(express.json());
 apiApp.use('/api', createApiRouter());
+apiApp.use(express.static(UI_DIST));
+
+apiApp.use((req, res) => {
+  res.sendFile(path.join(UI_DIST, "index.html"));
+});
+
 
 const apiServer = http.createServer(apiApp);
+
 attachWsServer(apiServer);
 
 apiServer.listen(API_PORT, () => {

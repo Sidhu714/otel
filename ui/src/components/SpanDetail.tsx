@@ -101,58 +101,8 @@
 
 
 import { useState } from 'react'
+import type { SpanDetailProps, SpanBlockProps, Log } from '../utils/types'
 
-/* ================= TYPES ================= */
-
-type SpanStatus = {
-  code?: number
-}
-
-type SpanAnalysis = {
-  isSlow?: boolean
-  ratio?: number
-  p95?: number
-  avgMs?: number
-  sampleCount?: number
-}
-
-type Span = {
-  spanId: string
-  parentSpanId?: string | null
-  name: string
-  durationMs: number
-  service?: string
-  status?: SpanStatus
-  attributes?: Record<string, unknown>
-  analysis?: SpanAnalysis
-}
-
-type Log = {
-  spanId?: string | null
-  severityText?: string
-  body?: string
-  timestampMs: number
-}
-
-type Trace = {
-  traceId: string
-  startMs: number
-  durationMs: number
-  spans?: Span[]
-  logs? : Log[]
-  hasError?: boolean
-}
-
-type SpanDetailProps = {
-  trace: Trace
-}
-
-type SpanBlockProps = {
-  span: Span
-  logs: Log[]
-}
-
-/* ================= COMPONENT ================= */
 
 export default function SpanDetail({ trace }: SpanDetailProps) {
   if (!trace.spans?.length) {

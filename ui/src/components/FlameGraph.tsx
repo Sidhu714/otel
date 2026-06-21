@@ -1,27 +1,10 @@
-
+import type { FlameGraphProps } from '../utils/types'
 
 const ROW_H = 22;
 const PAD = 3;
 const COLORS = ['#333331','#185FA5','#0F6E56','#534AB7','#854F0B','#3B6D11','#A32D2D'];
 
-type Span = {
-  spanId: string;
-  parentSpanId?: string | null;
-  name: string;
-  startMs: number;
-  durationMs: number;
-};
 
-type Trace = {
-  traceId: string;
-  startMs: number;
-  durationMs: number;
-  spans?: Span[];
-};
-
-type FlameGraphProps = {
-  trace: Trace;
-};
 
 export default function FlameGraph({ trace }: FlameGraphProps) {
   if (!trace.spans?.length) {

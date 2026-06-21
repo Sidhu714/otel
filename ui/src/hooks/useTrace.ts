@@ -1,20 +1,10 @@
 import { useState,useEffect,useCallback } from "react";
+import type { Trace } from "../utils/types";
 
-const WS_URL = 'ws://localhost:4320'
-const API_URL = 'http://localhost:4320/api'
+const WS_URL = `ws://${window.location.host}`
+const API_URL = '/api'
 
 
-type Trace ={
-    
-  traceId: string;
-  rootName: string;
-  service: string;
-  startMs : number;
-  durationMs: number;
-  startTime: number;
-  [key : string] : any;
-
-}
 
 
 export function useTraces(){
@@ -82,7 +72,7 @@ export function useTraces(){
 
     const selectTrace = useCallback(async (traceId : string) => {
 
-        setSelectedTrace(prev => prev?.traceId === traceId ? prev : {traceId, spans : []})
+        setSelectedTrace(prev => prev?.traceId === traceId ? prev : null)
 
         const res = await fetch(`${API_URL}/trace/${traceId}`);
         const data = await res.json();

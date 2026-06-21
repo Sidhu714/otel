@@ -111,7 +111,7 @@ class TraceStore extends EventEmitter{
 
     clear(){
         this._traces.clear();
-        resetAnalyser() 
+        resetAnalyzer() 
         this.emit("store:clear");
 
     }
@@ -144,7 +144,7 @@ function summarize(t){
 
     return {
         traceId : t.traceId,
-        rootName : t.rootName ?? t.span[0]?.name ?? "unknown",
+        rootName : t.rootName ?? t.spans[0]?.name ?? "unknown",
         service:    t.service ?? 'unknown',
         durationMs: t.endMs === -Infinity ? 0 : t.endMs - t.startMs,
         startMs:    t.startMs === Infinity ? Date.now() : t.startMs,

@@ -6,7 +6,7 @@ import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions'
 import { trace, context, SpanStatusCode } from '@opentelemetry/api'
 
 const exporter = new OTLPTraceExporter({
-  url: 'http://localhost:4318/v1/traces',
+  url: '/api/v1/traces',
 })
 
 export const sdk = new NodeSDK({

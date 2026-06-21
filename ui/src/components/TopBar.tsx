@@ -1,8 +1,5 @@
 
-type TopBarProps = {
-    connected : boolean;
-    onClear : () => void;
-}
+import type { TopBarProps } from '../utils/types';
 
 export default function TopBar({ connected, onClear } : TopBarProps ) {
   return (

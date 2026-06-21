@@ -1,4 +1,10 @@
-export default function Sidebar({ traces, selected, filter, onFilter, onSelect }) {
+
+import type { Trace,Props } from '../utils/types'
+
+
+
+
+export default function Sidebar({ traces, selected, filter, onFilter, onSelect }: Props) {
   return (
     <div className="sidebar">
       <div className="sidebar-head">
@@ -29,7 +35,7 @@ export default function Sidebar({ traces, selected, filter, onFilter, onSelect }
   )
 }
 
-function TraceRow({ trace, active, onClick }) {
+function TraceRow({ trace, active, onClick } : { trace: Trace; active: boolean; onClick: () => void }) {
   const time = new Date(trace.startMs).toLocaleTimeString()
 
   return (
