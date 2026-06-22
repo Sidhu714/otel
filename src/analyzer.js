@@ -37,7 +37,7 @@ export function recordSample(spanName,durationMs){
     if (samples.length > WINDOW_SIZE) samples.shift()
 }
 
-export function ananlyzeSpan(spanName,durationMs){
+export function analyzeSpan(spanName,durationMs){
     const samples = history.get(spanName) ?? [];
 
     if(samples.length < WINDOW_SIZE){
@@ -63,6 +63,7 @@ export function ananlyzeSpan(spanName,durationMs){
 
     }
 }
+
 
 
 export function getAllStats(){
@@ -104,3 +105,158 @@ function calcP95(samples){
 
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// # `recordSample(spanName, durationMs)`
+
+// ## Purpose
+
+// Stores a duration sample for a span and keeps only the latest `WINDOW_SIZE` samples.
+
+// ---
+
+// ## Parameters
+
+// | Parameter    | Type     | Description                   |
+// | ------------ | -------- | ----------------------------- |
+// | `spanName`   | `string` | Name of the operation or span |
+// | `durationMs` | `number` | Duration in milliseconds      |
+
+// ---
+
+// ## Example
+
+// ### Input
+
+// ```js
+// recordSample("db.query", 45)
+// recordSample("db.query", 50)
+// recordSample("db.query", 47)
+// ```
+
+// ### Internal State
+
+// ```js
+// Map {
+//   "db.query" => [45, 50, 47]
+// }
+// ```
+
+// ---
+
+// ## Produces
+
+// No return value.
+
+// ```js
+// undefined
+// ```
+
+// ---
+
+// ## Side Effect
+
+// Updates the internal history map.
+
+// Calling:
+
+// ```js
+// recordSample("GET /api/user", 120)
+// ```
+
+// changes
+
+// ```js
+// Map {}
+// ```
+
+// into
+
+// ```js
+// Map {
+//   "GET /api/user" => [120]
+// }
+// ```
+
+// ---
+
+// ## Window Behavior
+
+// Assume:
+
+// ```js
+// WINDOW_SIZE = 5
+// ```
+
+// Current samples:
+
+// ```js
+// [120, 110, 130, 125, 140]
+// ```
+
+// After:
+
+// ```js
+// recordSample("GET /api/user", 150)
+// ```
+
+// Temporary array:
+
+// ```js
+// [120, 110, 130, 125, 140, 150]
+// ```
+
+// Since length exceeds 5, the oldest value is removed:
+
+// ```js
+// [110, 130, 125, 140, 150]
+// ```
+
+// ---
+
+// ## Summary
+
+// ### Takes
+
+// ```js
+// (string, number)
+// ```
+
+// Example:
+
+// ```js
+// ("db.query", 45)
+// ```
+
+// ### Returns
+
+// ```js
+// undefined
+// ```
+
+// ### Modifies
+
+// ```js
+// history : Map<string, number[]>
+// ```
+
+// ### Guarantees
+
+// * Creates a new entry if the span doesn't exist.
+// * Appends the duration to the span's sample list.
+// * Maintains at most `WINDOW_SIZE` samples.
+// * Removes the oldest sample when the limit is exceeded.
