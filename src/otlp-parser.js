@@ -82,6 +82,10 @@ function toHex(value){
 }
 
 
+// toHex("ABC123") since it is string return "abc123"
+
+
+
 
 
 // const body = {
