@@ -1,4 +1,4 @@
-import { parseOtlpJson } from "../otlp-parser.js";
+import { parseOtlpJson } from "../src/otlp-parser.js";
 
 
 const body = {

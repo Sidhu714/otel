@@ -5,19 +5,27 @@
   "scripts": {
     "start": "node src/server.js",
     "demo": "node src/server.js --demo",
-    "build": "cd ui && npm install && npm run build"
+    "build": "cd ui && npm install && npm run build && cd .. && node scripts/copy-ui.js"
   },
   "files": [
     "bin",
     "src",
-    "ui/dist"
+    "public"
   ],
-  "keywords": ["opentelemetry", "otel", "tracing", "observability", "devtools", "local", "debugging"],
+  "keywords": [
+    "opentelemetry",
+    "otel",
+    "tracing",
+    "observability",
+    "devtools",
+    "local",
+    "debugging"
+  ],
   "author": "Sidharth",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Sidhu714/otel.git"
+    "url": "git+https://github.com/Sidhu714/otel.git"
   },
   "homepage": "https://github.com/Sidhu714/otellocal#readme",
   "bugs": {
@@ -36,6 +44,9 @@
     "ws": "^8.20.0"
   },
   "bin": {
-    "otellocal": "./bin/otellocal.js"
+    "otellocal": "bin/otellocal.js"
+  },
+  "devDependencies": {
+    "fs-extra": "^11.3.5"
   }
 }
