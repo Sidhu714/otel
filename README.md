@@ -1,3 +1,5 @@
+![CI](https://github.com/Sidhu714/otel/actions/workflows/ci.yml/badge.svg)
+
 # otellocal
 
 A zero-config, local-first OpenTelemetry collector with a built-in UI. Point your app at it, see your traces — no signup, no SaaS account, no infrastructure to stand up.
