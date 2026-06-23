@@ -1,6 +1,6 @@
 {
   "name": "otellocal",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A zero-config local OpenTelemetry collector with a built-in UI — trace waterfall, flame graph, service dependency graph, and slow-span detection. No signup, no SaaS, runs entirely on your machine.",
   "scripts": {
     "start": "node src/server.js",
