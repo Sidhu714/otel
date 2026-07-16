@@ -1,6 +1,6 @@
 import { EventEmitter } from "events"
 
-import {ananlyzeSpan,resetAnalyzer,recordSample} from "./analyzer.js"
+import {analyzeSpan,resetAnalyzer,recordSample} from "./analyzer.js"
 
 const MAX_TRACES = 200;
 const TTL_MS = 30 * 60_000; // drop traces older than 30 min
@@ -48,7 +48,7 @@ class TraceStore extends EventEmitter{
             const service = getAttr(span.resource?.attributes,'service.name') ?? "unknown";
 
             recordSample(span.name,durMs);
-            const analysis = ananlyzeSpan(span.name, durMs)
+            const analysis = analyzeSpan(span.name, durMs)
 
             record.spans.push({
                 spanId:       span.spanId,
