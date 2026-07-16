@@ -10,7 +10,7 @@ import { fileURLToPath } from "url";
 
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const UI_DIST = path.join(__dirname, "..",'ui','dist');
+const UI_DIST = path.join(__dirname, "..", 'public');
 
 const OTLP_HTTP_PORT = process.env.OTLP_HTTP_PORT ?? 4318;
 const API_PORT       = process.env.API_PORT       ?? 4320;
