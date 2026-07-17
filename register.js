@@ -26,9 +26,12 @@ const sdk = new NodeSDK({
   instrumentations: [getNodeAutoInstrumentations()],
 })
 
-sdk.start()
+await sdk.start()
 
 console.log(`[otellocal/register] tracing "${SERVICE_NAME}" -> ${OTEL_URL}`)
 
 process.on('SIGTERM', () => sdk.shutdown().catch(() => {}))
 process.on('SIGINT', () => sdk.shutdown().catch(() => {}))
+
+
+// console.log("REGISTER VERSION 0.1.6");
