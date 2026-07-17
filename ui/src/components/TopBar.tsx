@@ -9,7 +9,7 @@ export default function TopBar({ connected, onClear } : TopBarProps ) {
         <span className={`status-pill ${connected ? 'connected' : 'disconnected'}`}>
           {connected ? '● live' : '○ connecting...'}
         </span>
-        <span className="ports">grpc :4317 · http :4318</span>
+        {/* <span className="ports">grpc :4317 · http :4318</span> */}
       </div>
 
       <div className="topbar-right">

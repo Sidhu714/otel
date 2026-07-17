@@ -8,6 +8,7 @@ export function createHttpReceiver(){
     const app = express();
 
     app.use(cors());
+    
     app.use(express.raw({
         type : "*/*",
         limit : "10mb"
@@ -21,7 +22,7 @@ export function createHttpReceiver(){
                 ? parseOtlpJson(req.body.toString())
                 : parseOtlpProto(req.body);
 
-            console.log("The span",req.body.toString())    
+               
             
             if(spans.length > 0){
                 store.ingest(spans);
