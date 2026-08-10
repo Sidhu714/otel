@@ -50,6 +50,14 @@
     "pg": "^8.20.0",
     "ws": "^8.20.0"
   },
+  "peerDependencies": {
+    "opentelemetry-instrumentation-bullmq": "^1.0.0"
+  },
+  "peerDependenciesMeta": {
+    "opentelemetry-instrumentation-bullmq" : {
+      "optional": true
+    }
+  },
   "bin": {
     "otellocal": "bin/otellocal.js"
   },
@@ -60,6 +68,7 @@
   },
   "exports": {
     ".": "./src/server.js",
-    "./register": "./register.js"
+    "./register": "./register.js",
+    "./propagation": "./src/propagation.js"
   }
 }
