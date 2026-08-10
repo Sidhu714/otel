@@ -49,6 +49,9 @@ apiServer.listen(API_PORT, () => {
   console.log(`  OTEL_EXPORTER_OTLP_PROTOCOL=http/json\n`);
 });
 
+
+
+
 function injectDemoTraces() {
   const demos = [
     ['POST /api/orders',   'order-service',  220, false],

@@ -1,9 +1,18 @@
 import { sdk, tracer } from './tracing.js'
 import express from 'express'
-import { SpanStatusCode, context, trace } from '@opentelemetry/api'
+import { SpanStatusCode, context, trace,propagation } from '@opentelemetry/api'
+import { Queue } from 'bullmq'
 
 const app = express()
 app.use(express.json())
+
+
+const paymentQueue = new Queue('payment-queue', {
+  connection: {
+    host: 'localhost',
+    port: 6379,
+  },
+})
 
 const sleep = ms => new Promise(r => setTimeout(r, ms))
 
@@ -97,11 +106,63 @@ app.get('/api/reports', async (req, res) => {
   }
 })
 
+
+app.post('/api/orders/new', async (req, res) => {
+  const span = trace.getActiveSpan()
+
+  try {
+    await simulateServiceCall(
+      span,
+      'user-service',
+      'user.validate',
+      20
+    )
+
+    await simulateServiceCall(
+      span,
+      'order-service',
+      'order.create',
+      40
+    )
+
+    const carrier = {};
+
+    propagation.inject(
+      context.active(),
+      carrier
+    )
+
+    // REAL QUEUE
+    await paymentQueue.add('payment.charge', {
+      orderId: `ord-${Date.now()}`,
+      amount: 100,
+      traceContext: carrier,
+    })
+
+    await simulateServiceCall(
+      span,
+      'email-service',
+      'email.sendReceipt',
+      30
+    )
+
+    res.status(201).json({
+      message: 'Order created',
+    })
+
+  } catch (err) {
+    res.status(503).json({
+      error: err.message,
+    })
+  }
+})
+
 app.listen(3000, () => {
   console.log('[testapp] http://localhost:3000')
   console.log('\nhit these to populate the graph:\n')
   console.log('  curl http://localhost:3000/api/users/1')
   console.log('  curl -X POST http://localhost:3000/api/orders')
+  console.log('  curl -X POST http://localhost:3000/api/orders/new')
   console.log('  curl http://localhost:3000/api/products')
   console.log('  curl http://localhost:3000/api/reports')
 })

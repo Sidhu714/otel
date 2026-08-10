@@ -6,7 +6,7 @@ import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions'
 import { trace, context, SpanStatusCode } from '@opentelemetry/api'
 
 const exporter = new OTLPTraceExporter({
-  url: '/api/v1/traces',
+  url: 'http://localhost:4318/v1/traces',
 })
 
 export const sdk = new NodeSDK({
@@ -29,5 +29,18 @@ sdk.start()
 // Export tracer so app.js can create manual spans
 export const tracer = trace.getTracer('api-gateway')
 
-process.on('SIGTERM', () => sdk.shutdown())
-process.on('SIGINT',  () => sdk.shutdown())
+const shutdown = async (signal) => {
+  console.log(`\n[otel] Received ${signal}, shutting down...`)
+
+  try {
+    await sdk.shutdown()
+    console.log('[otel] SDK shut down successfully')
+  } catch (err) {
+    console.error('[otel] Error shutting down SDK:', err)
+  } finally {
+    process.exit(0)
+  }
+}
+
+process.once('SIGINT', () => shutdown('SIGINT'))
+process.once('SIGTERM', () => shutdown('SIGTERM'))
