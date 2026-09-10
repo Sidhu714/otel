@@ -4,6 +4,7 @@ import { spawn } from "node:child_process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import path from "node:path";
 import http from "node:http";
+import { readFile } from "node:fs/promises";
 
 const args = process.argv.slice(2);
 
@@ -14,6 +15,7 @@ const register = pathToFileURL(
 ).href;
 
 const collectorEntry = path.resolve(__dirname, "../src/server.js");
+const packageJson = path.resolve(__dirname, "../package.json");
 
 let collectorProcess = null;
 let appProcess = null;
@@ -51,11 +53,30 @@ async function waitForCollector(timeout = 10000) {
   return false;
 }
 
+
 function printUsage() {
-  console.error("Usage:");
-  console.error("  otellocal");
-  console.error("  otellocal run <app.js>");
+  console.log(`
+Usage:
+  otellocal
+  otellocal run <app.js>
+
+Commands:
+  run <app.js>   Run an application with OpenTelemetry
+
+Options:
+  --demo         Start the collector only
+  -h, --help     Show this help message
+  -v, --version  Show the package version
+`);
 }
+
+
+async function printVersion() {
+  const packageData = JSON.parse(await readFile(packageJson, "utf8"));
+  console.log(packageData.version);
+}
+
+
 
 function shutdown() {
   console.log("\n[otellocal] shutting down...");
@@ -128,6 +149,19 @@ async function runWithApp(target, extraArgs) {
 /* ---------------------------- Entry -------------------------------- */
 
 async function main() {
+
+  if (args[0] === "--help" || args[0] === "-h") {
+    printUsage();
+    return;
+  }
+
+  // Version
+  if (args[0] === "--version" || args[0] === "-v") {
+    await printVersion();
+    return;
+  }
+
+
   if (args.length === 0 || args[0] === '--demo') {
     await runCollectorOnly();
     return;
