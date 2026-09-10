@@ -51,6 +51,12 @@ async function waitForCollector(timeout = 10000) {
   return false;
 }
 
+function printUsage() {
+  console.error("Usage:");
+  console.error("  otellocal");
+  console.error("  otellocal run <app.js>");
+}
+
 function shutdown() {
   console.log("\n[otellocal] shutting down...");
 
@@ -68,88 +74,77 @@ function shutdown() {
 process.on("SIGINT", shutdown);
 process.on("SIGTERM", shutdown);
 
-/* ---------------------- Collector Mode ---------------------- */
+/* ---------------------------- Modes -------------------------------- */
 
-if (args.length === 0) {
+async function runCollectorOnly() {
   await import("../src/server.js");
-} else if (args[0] === "run") {
-  // run logic
-} else {
-  console.error("Usage:");
-  console.error("  otellocal");
-  console.error("  otellocal run <app.js>");
-  process.exit(1);
+  // server.js registers its own listeners and keeps the process alive —
+  // nothing further to do here, and nothing below this function runs.
 }
 
-/* -------------------------- Run ----------------------------- */
+async function runWithApp(target, extraArgs) {
+  if (!(await isCollectorRunning())) {
+    console.log("[otellocal] starting collector...");
 
-if (args[0] !== "run") {
-  console.error("Usage:");
-  console.error("  otellocal");
-  console.error("  otellocal run <app.js>");
-  process.exit(1);
-}
-
-const target = args[1];
-
-if (!target) {
-  console.error("Usage: otellocal run <app.js>");
-  process.exit(1);
-}
-
-/* ------------------ Start collector if needed ------------------ */
-
-if (!(await isCollectorRunning())) {
-  console.log("[otellocal] starting collector...");
-
-  collectorProcess = spawn(
-    process.execPath,
-    [collectorEntry],
-    {
+    collectorProcess = spawn(process.execPath, [collectorEntry], {
       stdio: "inherit"
+    });
+
+    collectorProcess.on("error", err => {
+      console.error("[collector]", err);
+      process.exit(1);
+    });
+
+    const ready = await waitForCollector();
+
+    if (!ready) {
+      console.error("[otellocal] collector failed to start.");
+      process.exit(1);
     }
+  } else {
+    console.log("[otellocal] using existing collector");
+  }
+
+  console.log("[otellocal] starting app...\n");
+
+  appProcess = spawn(
+    process.execPath,
+    ["--import", register, target, ...extraArgs],
+    { stdio: "inherit" }
   );
 
-  collectorProcess.on("error", err => {
-    console.error("[collector]", err);
-    process.exit(1);
+  appProcess.on("error", err => {
+    console.error(err);
   });
 
-  const ready = await waitForCollector();
-
-  if (!ready) {
-    console.error("[otellocal] collector failed to start.");
-    process.exit(1);
-  }
-} else {
-  console.log("[otellocal] using existing collector");
+  appProcess.on("exit", code => {
+    if (collectorProcess && !collectorProcess.killed) {
+      collectorProcess.kill("SIGINT");
+    }
+    process.exit(code ?? 0);
+  });
 }
 
-/* ----------------------- Start App ------------------------ */
+/* ---------------------------- Entry -------------------------------- */
 
-console.log("[otellocal] starting app...\n");
-
-appProcess = spawn(
-  process.execPath,
-  [
-    "--import",
-    register,
-    target,
-    ...args.slice(2)
-  ],
-  {
-    stdio: "inherit"
-  }
-);
-
-appProcess.on("error", err => {
-  console.error(err);
-});
-
-appProcess.on("exit", code => {
-  if (collectorProcess && !collectorProcess.killed) {
-    collectorProcess.kill("SIGINT");
+async function main() {
+  if (args.length === 0) {
+    await runCollectorOnly();
+    return;
   }
 
-  process.exit(code ?? 0);
-});
+  if (args[0] !== "run") {
+    printUsage();
+    process.exit(1);
+  }
+
+  const target = args[1];
+  if (!target) {
+    console.error("Usage: otellocal run <app.js>");
+    process.exit(1);
+  }
+
+  await runWithApp(target, args.slice(2));
+}
+
+main();

@@ -13,7 +13,7 @@ import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http'
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node'
 import { resourceFromAttributes } from '@opentelemetry/resources'
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions'
-import { BullMQInstrumentation } from 'opentelemetry-instrumentation-bullmq'
+
 
 const OTEL_URL = process.env.OTELLOCAL_URL || 'http://localhost:4318/v1/traces'
 const SERVICE_NAME =
@@ -21,13 +21,20 @@ const SERVICE_NAME =
 
 const exporter = new OTLPTraceExporter({ url: OTEL_URL })
 
+
+const instrumentations = [getNodeAutoInstrumentations()]
+
+try {
+  const { BullMQInstrumentation } = await import('opentelemetry-instrumentation-bullmq')
+  instrumentations.push(new BullMQInstrumentation())
+} catch {
+  // opentelemetry-instrumentation-bullmq not installed — skip silently
+}
+
 const sdk = new NodeSDK({
   resource: resourceFromAttributes({ [ATTR_SERVICE_NAME]: SERVICE_NAME }),
   traceExporter: exporter,
-  instrumentations: [
-    getNodeAutoInstrumentations(),
-    new BullMQInstrumentation(),
-  ],
+  instrumentations
 })
 
 await sdk.start()
