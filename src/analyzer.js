@@ -13,7 +13,6 @@
 
 const WINDOW_SIZE  = 100   // keep last 100 samples per span name
 const SLOW_FACTOR  = 2.0   // flag if duration > 2x the p95
-const MIN_SAMPLES  = 5     // don't flag until we have enough history
 
 
 const history = new Map();

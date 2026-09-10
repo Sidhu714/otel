@@ -5,7 +5,6 @@ const require = createRequire(import.meta.url);
 export function parseOtlpJson(raw){
     const body = typeof raw === 'string' ? JSON.parse(raw) : JSON.parse(raw.toString());
     return extractSpans(body);
-    console.log("The body parser",body)
 }
 
 

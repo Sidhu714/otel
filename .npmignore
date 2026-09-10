@@ -1,4 +1,2 @@
-src/db.js
-src/docker.compose.yml
-src/playground/
+playground/
 tests/

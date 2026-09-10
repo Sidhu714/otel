@@ -22,7 +22,7 @@ export function attachWsServer(httpServer){
     store.on('trace:update',(trace) => {
         broadcast(wss,{
             type : "trace:update",
-            trace : summarize(trace)
+            trace : trace
         });
     })
 
@@ -44,17 +44,4 @@ function broadcast(wss,msg){
 
 function send(ws,msg){
     if(ws.readyState === 1) ws.send(JSON.stringify(msg))
-}
-
-
-function summarize(trace) {
-  return {
-    traceId:    trace.traceId,
-    rootName:   trace.rootName,
-    service:    trace.service,
-    durationMs: trace.durationMs,
-    startMs:    trace.startMs,
-    spanCount:  trace.spanCount,
-    hasError:   trace.hasError,
-  };
 }

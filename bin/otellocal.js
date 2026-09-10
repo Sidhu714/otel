@@ -128,7 +128,7 @@ async function runWithApp(target, extraArgs) {
 /* ---------------------------- Entry -------------------------------- */
 
 async function main() {
-  if (args.length === 0) {
+  if (args.length === 0 || args[0] === '--demo') {
     await runCollectorOnly();
     return;
   }

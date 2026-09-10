@@ -49,6 +49,14 @@ npx otellocal --demo
 
 This starts the collector and feeds it a stream of synthetic traces so you can explore the UI immediately, without wiring up real instrumentation first.
 
+### Run and auto-instrument a Node app in one step
+
+```bash
+npx otellocal run app.js
+```
+
+This starts the collector (if one isn't already running on the default ports), then runs `app.js` with OpenTelemetry auto-instrumentation preloaded via `--import`. No changes to your app's code are required — just standard Node auto-instrumentation for common libraries (HTTP, common DB clients, etc.), plus optional BullMQ support if `opentelemetry-instrumentation-bullmq` is installed alongside it.
+
 ## Installation
 
 **Run directly (recommended):**
@@ -101,12 +109,23 @@ The UI talks to a small REST API, also usable directly:
 
 Traces are held in an in-memory store with a rolling eviction policy (oldest traces dropped after 30 minutes or once 200 traces are held) — there's no database. Slow-span detection works by keeping a rolling window of the last 100 durations per operation name and comparing each new span against that operation's own p95, so "slow" is relative to that specific endpoint's normal behavior rather than a single global threshold.
 
+## Security posture
+
+`otellocal` is built to run on your own machine for local development — it is **not hardened for exposure beyond localhost** and should not be run on a shared or public network. Specifically:
+
+- There is no authentication on the OTLP receiver, the REST API, or the WebSocket server. Anything that can reach the ports can send it trace data or read what's stored.
+- CORS is wide open (no origin restrictions) so the UI works out of the box in local dev.
+- There is no rate limiting on ingestion.
+
+If you need any of this for a shared environment, put `otellocal` behind a reverse proxy that adds auth, or don't expose its ports outside `localhost`.
+
 ## Project structure
 
 ```
 otel/
 ├── bin/             # CLI entry point
 ├── src/             # collector + API server (Node/Express)
+├── tests/           # node:test unit tests for src/
 ├── ui/              # React frontend (Vite)
 └── examples/        # a minimal instrumented app to try it against
 ```
