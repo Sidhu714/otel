@@ -45,4 +45,3 @@ process.on('SIGTERM', () => sdk.shutdown().catch(() => {}))
 process.on('SIGINT', () => sdk.shutdown().catch(() => {}))
 
 
-// console.log("REGISTER VERSION 0.1.6");
