@@ -15,7 +15,7 @@ class TraceStore extends EventEmitter {
 
         this._traces = new Map();
 
-        setInterval(() => this._evict(), 5 * 60_000)
+        this._evictionTimer = setInterval(() => this._evict(), 5 * 60_000);
     }
 
     async ingest(spans) {
@@ -136,6 +136,10 @@ class TraceStore extends EventEmitter {
             logs: [...t.logs].sort((a, b) => a.timestampMs - b.timestampMs),
         }
     }
+
+    close(){
+        clearInterval(this._evictionTimer);
+    }
 }
 
 
@@ -191,4 +195,6 @@ function getAttr(attrs, key) {
     return v?.stringValue ?? v?.intValue ?? v?.doubleValue ?? v?.boolValue ?? null;
 }
 
-export const store = new TraceStore();
+export function createTraceStore(){
+    return new TraceStore();
+}

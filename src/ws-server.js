@@ -1,7 +1,7 @@
 import { WebSocketServer } from "ws"
-import { store } from "./store.js"
 
-export function attachWsServer(httpServer){
+
+export function attachWsServer(httpServer,store){
 
     const wss = new WebSocketServer({
         server : httpServer

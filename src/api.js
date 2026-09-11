@@ -1,10 +1,10 @@
 import { Router } from "express"
-import { store } from "./store.js"
+
 import { buildGraph } from "./graph.js"
 import { getAllStats } from "./analyzer.js";
 
 
-export function createApiRouter() {
+export function createApiRouter(store) {
     const router = Router();
 
     router.get("/traces", (req, res) => {

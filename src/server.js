@@ -4,7 +4,7 @@ import cors from 'cors';
 import { createHttpReceiver } from './http-receiver.js';
 import { attachWsServer } from './ws-server.js';
 import { createApiRouter } from './api.js';
-import { store } from './store.js';
+import { createTraceStore } from './store.js';
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -16,7 +16,9 @@ const OTLP_HTTP_PORT = process.env.OTLP_HTTP_PORT ?? 4318;
 const API_PORT       = process.env.API_PORT       ?? 4320;
 const DEMO_MODE      = process.argv.includes('--demo');
 
-const otlpApp    = createHttpReceiver();
+const store = createTraceStore();
+
+const otlpApp    = createHttpReceiver(store);
 const otlpServer = http.createServer(otlpApp);
 otlpServer.listen(OTLP_HTTP_PORT, () => {
   console.log(`[otellocal] OTLP/HTTP  :${OTLP_HTTP_PORT}`);
@@ -26,7 +28,7 @@ const apiApp = express();
 
 apiApp.use(cors());
 apiApp.use(express.json());
-apiApp.use('/api', createApiRouter());
+apiApp.use('/api', createApiRouter(store));
 apiApp.use(express.static(UI_DIST));
 
 apiApp.use((req, res) => {
@@ -36,7 +38,7 @@ apiApp.use((req, res) => {
 
 const apiServer = http.createServer(apiApp);
 
-attachWsServer(apiServer);
+attachWsServer(apiServer,store);
 
 apiServer.listen(API_PORT, () => {
   console.log(`[otellocal] API + WS   :${API_PORT}`);

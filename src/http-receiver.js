@@ -1,10 +1,10 @@
 import express from "express"
 import cors from "cors"
-import { store } from "./store.js"
+
 import { parseOtlpJson, parseOtlpProto } from "./otlp-parser.js"
 
 
-export function createHttpReceiver(){
+export function createHttpReceiver(store){
     const app = express();
 
     app.use(cors());
